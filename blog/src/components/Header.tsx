@@ -1,0 +1,15 @@
+import {Link} from "react-router-dom";
+import React from "react";
+
+export default function Header() {
+  return (
+    <header className="header">
+      <div>
+        <Link to="/" className="header__logo">React Blog</Link>
+        <Link to="/posts/new">글쓰기</Link>
+        <Link to="/posts">게시글</Link>
+        <Link to="/profile">프로필</Link>
+      </div>
+    </header>
+  )
+};
