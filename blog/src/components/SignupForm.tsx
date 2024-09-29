@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import {app} from "firebaseApp"
 import {getAuth, createUserWithEmailAndPassword} from "firebase/auth";
+import {toast} from "react-toastify";
 
 export default function SignupForm() {
   const [error, setError] = useState<string>(""); // validation 검증시 에러발생
@@ -15,11 +16,12 @@ export default function SignupForm() {
 
     try {
       const auth = getAuth(app);
-      console.log('email: ', email);
-      console.log('password: ', password);
       await createUserWithEmailAndPassword(auth, email, password);
-    } catch(e) {
+
+      toast.success("회원가입 성공");
+    } catch(e:any) {
       console.log('e: ', e);
+      toast.error(e?.code);
     }
   }
 
@@ -28,11 +30,9 @@ export default function SignupForm() {
       target: {name, value},
     } = e;
 
-    console.log(name, value);
     // validation
     if (name === 'email') {
       setEmail(value);
-      console.log('email: ', email);
       const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
       if (!value?.match(validRegex)) {
