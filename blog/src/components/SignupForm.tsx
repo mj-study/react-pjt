@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {app} from "firebaseApp"
 import {getAuth, createUserWithEmailAndPassword} from "firebase/auth";
 import {toast} from "react-toastify";
@@ -9,6 +9,7 @@ export default function SignupForm() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordConfirm, setPasswordConfirm] = useState<string>("");
+  const navigate = useNavigate();
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     // form을 직접 제출하지 않기에 prevent
@@ -19,6 +20,7 @@ export default function SignupForm() {
       await createUserWithEmailAndPassword(auth, email, password);
 
       toast.success("회원가입 성공");
+      navigate("/");
     } catch(e:any) {
       console.log('e: ', e);
       toast.error(e?.code);
