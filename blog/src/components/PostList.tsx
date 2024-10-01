@@ -10,8 +10,8 @@ interface PostListProps {
 
 type TabType = 'all' | 'my';
 
-interface PostProps {
-  id: string;
+export interface PostProps {
+  id?: string;
   title: string;
   email: string;
   summary: string;
@@ -26,7 +26,6 @@ export default function PostList({ hasNavigation = true }: PostListProps) {
 
   const getPosts = async () => {
     const datas = await getDocs(collection(db, 'posts'));
-    console.log('datas: ', datas);
     datas?.forEach((doc) => {
       const dataObj = { ...doc.data(), id: doc.id };
       setPosts((prev) => [...prev, dataObj as PostProps]);
@@ -68,7 +67,7 @@ export default function PostList({ hasNavigation = true }: PostListProps) {
                   <div className="post__date">{post?.createdAt}</div>
                 </div>
                 <div className="post__title">{post?.title}</div>
-                <div className="post__text">{post?.content}</div>
+                <div className="post__text">{post?.summary}</div>
               </Link>
               {post?.email === user?.email && (
                 <div className="post__utils-box">
