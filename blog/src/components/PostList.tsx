@@ -1,64 +1,89 @@
-import {useState} from "react";
-import {Link} from "react-router-dom";
-import React from "react";
+import React, { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebaseApp';
+import AuthContext from '../context/AuthContext';
 
 interface PostListProps {
   hasNavigation?: boolean;
 }
 
-type TabType = "all" | "my";
+type TabType = 'all' | 'my';
 
-export default function PostList({hasNavigation = true}: PostListProps) {
-  const [activeTab, setActiveTab] = useState<TabType>("all");
+interface PostProps {
+  id: string;
+  title: string;
+  email: string;
+  summary: string;
+  content: string;
+  createdAt: string;
+}
+
+export default function PostList({ hasNavigation = true }: PostListProps) {
+  const [activeTab, setActiveTab] = useState<TabType>('all');
+  const [posts, setPosts] = useState<PostProps[]>([]);
+  const { user } = useContext(AuthContext);
+
+  const getPosts = async () => {
+    const datas = await getDocs(collection(db, 'posts'));
+    console.log('datas: ', datas);
+    datas?.forEach((doc) => {
+      const dataObj = { ...doc.data(), id: doc.id };
+      setPosts((prev) => [...prev, dataObj as PostProps]);
+    });
+  };
+
+  useEffect(() => {
+    getPosts();
+  }, []);
+
   return (
     <>
       {hasNavigation && (
         <div className="post__navigation">
-          <div role="presentation"
-               onClick={() => setActiveTab("all")}
-               className={activeTab === "all" ? "post__navigation--active" : ""}
+          <div
+            role="presentation"
+            onClick={() => setActiveTab('all')}
+            className={activeTab === 'all' ? 'post__navigation--active' : ''}
           >
             전체
           </div>
-          <div role="presentation"
-               onClick={() => setActiveTab("my")}
-               className={activeTab === "my" ? "post__navigation--active" : ""}
+          <div
+            role="presentation"
+            onClick={() => setActiveTab('my')}
+            className={activeTab === 'my' ? 'post__navigation--active' : ''}
           >
             나의 글
           </div>
         </div>
       )}
       <div className="post__list">
-        {[...Array(10)].map((e, index) => (
-            <div key={index} className="post__box">
-              <Link to={`/posts/${index}`}>
+        {posts?.length > 0 ? (
+          posts.map((post, index) => (
+            <div key={post?.id} className="post__box">
+              <Link to={`/posts/${post?.id}`}>
                 <div className="post__profile-box">
-                  <div className="post__profile"/>
-                  <div className="post__author-name">패스트캠퍼스</div>
-                  <div className="post__date">2024.09.27 금요일</div>
+                  <div className="post__profile" />
+                  <div className="post__author-name">{post?.email}</div>
+                  <div className="post__date">{post?.createdAt}</div>
                 </div>
-                <div className='post__title'>게시글 {index}</div>
-                <div className="post__text">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Vivamus luctus urna sed urna ultricies ac tempor dui sagittis.
-                  In condimentum facilisis porta.
-                  Sed nec diam eu diam mattis viverra.
-                  Nulla fringilla, orci ac euismod semper, magna diam porttitor mauris.
-                  Quisque ut dolor gravida, placerat libero vel, euismod.
-                  Fusce dapibus, tellus ac cursus commodo, tortor mauris.
-                  Cras mattis consectetur purus sit amet fermentum.
-                  Aenean eu leo quam. Pellentesque ornare sem lacinia quam venenatis.
-                  Etiam porta sem malesuada magna mollis euismod.
-                </div>
-                <div className="post__utils-box">
-                  <div className="post__delete">삭제</div>
-                  <div className="post__edit">수정</div>
-                </div>
+                <div className="post__title">{post?.title}</div>
+                <div className="post__text">{post?.content}</div>
               </Link>
+              {post?.email === user?.email && (
+                <div className="post__utils-box">
+                  <div className="post__edit">
+                    <Link to={`/posts/edit/${post?.id}`}>수정</Link>
+                  </div>
+                  <div className="post__delete">삭제</div>
+                </div>
+              )}
             </div>
-          )
+          ))
+        ) : (
+          <div className="post__no-post">게시글이 없습니다.</div>
         )}
       </div>
     </>
   );
-};
+}
