@@ -1,5 +1,5 @@
-import {useState, useEffect} from "react";
-import  {app} from "./firebaseApp";
+import {useEffect, useState} from "react";
+import {app} from "./firebaseApp";
 import {getAuth, onAuthStateChanged} from "firebase/auth";
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
