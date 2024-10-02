@@ -9,7 +9,7 @@ export default function PostsPage() {
     <>
       <Header />
       <Carousel />
-      <PostList hasNavigation={false} />
+      <PostList hasNavigation={false} defaultTab="my" />
       <Footer />
     </>
   );
