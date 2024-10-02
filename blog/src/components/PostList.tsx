@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { collection, getDocs } from 'firebase/firestore';
+import { Link, useNavigate } from 'react-router-dom';
+import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseApp';
 import AuthContext from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 interface PostListProps {
   hasNavigation?: boolean;
@@ -25,13 +26,24 @@ export default function PostList({ hasNavigation = true }: PostListProps) {
   const [activeTab, setActiveTab] = useState<TabType>('all');
   const [posts, setPosts] = useState<PostProps[]>([]);
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const getPosts = async () => {
     const datas = await getDocs(collection(db, 'posts'));
+    setPosts([]); // 초기화 하고 다시 set
     datas?.forEach((doc) => {
       const dataObj = { ...doc.data(), id: doc.id };
       setPosts((prev) => [...prev, dataObj as PostProps]);
     });
+  };
+
+  const handleDelete = async (id: string) => {
+    const confirm = window.confirm('해당 게시글을 삭제하시겠습니까?');
+    if (confirm && id) {
+      await deleteDoc(doc(db, 'posts', id));
+      toast.success('게시글을 삭제했습니다.');
+      getPosts(); // 삭제 후 갱신
+    }
   };
 
   useEffect(() => {
@@ -76,7 +88,12 @@ export default function PostList({ hasNavigation = true }: PostListProps) {
                   <div className="post__edit">
                     <Link to={`/posts/edit/${post?.id}`}>수정</Link>
                   </div>
-                  <div className="post__delete">삭제</div>
+                  <div
+                    className="post__delete"
+                    onClick={() => handleDelete(post?.id as string)}
+                  >
+                    삭제
+                  </div>
                 </div>
               )}
             </div>
