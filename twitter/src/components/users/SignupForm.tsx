@@ -1,6 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+} from 'firebase/auth';
 import { app } from '../../firebaseApp';
 import { toast } from 'react-toastify';
 
@@ -47,7 +53,7 @@ export default function SignupForm() {
 
       if (value?.length < 8) {
         setError('비밀번호는 8자리 이상 입력해주세요');
-      } else if (value !== password) {
+      } else if (value !== passwordConfirmation) {
         setError('비밀번호와 비밀번호 확인 값이 다릅니다.');
       } else {
         setError('');
@@ -65,6 +71,37 @@ export default function SignupForm() {
         setError('');
       }
     }
+  };
+
+  const onClickSocialLogin = async (e: any) => {
+    const {
+      target: { name },
+    } = e;
+
+    let provider;
+    const auth = getAuth(app);
+
+    if (name === 'google') {
+      provider = new GoogleAuthProvider();
+    }
+
+    if (name === 'github') {
+      provider = new GithubAuthProvider();
+    }
+
+    await signInWithPopup(
+      auth,
+      provider as GithubAuthProvider | GoogleAuthProvider
+    )
+      .then((result) => {
+        console.log(result);
+        toast.success('로그인 되었습니다');
+      })
+      .catch((error) => {
+        console.log(error);
+        const errorMessage = error.message;
+        toast?.error(errorMessage);
+      });
   };
 
   return (
@@ -105,7 +142,7 @@ export default function SignupForm() {
       </div>
       <div className="form__block">
         계정이 있으신가요?
-        <Link to="login" className="form__link">
+        <Link to="/users/login" className="form__link">
           로그인하기
         </Link>
       </div>
@@ -115,13 +152,33 @@ export default function SignupForm() {
         </div>
       )}
 
-      <div className="form__block">
+      <div className="form__block--lg">
         <button
           className="form__btn--submit"
           type="submit"
           disabled={error?.length > 0}
         >
           회원가입
+        </button>
+      </div>
+      <div className="form__block--lg">
+        <button
+          className="form__btn--google"
+          type="button"
+          name="google"
+          onClick={onClickSocialLogin}
+        >
+          Google로 회원가입
+        </button>
+      </div>
+      <div className="form__block--lg">
+        <button
+          className="form__btn--github"
+          type="button"
+          name="github"
+          onClick={onClickSocialLogin}
+        >
+          Github으로 회원가입
         </button>
       </div>
     </form>
