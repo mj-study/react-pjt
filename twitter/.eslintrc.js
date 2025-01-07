@@ -13,5 +13,6 @@ module.exports = {
     'no-console': 'warn',
     'react/prop-types': 'off',
     'react/react-in-jsx-scope': 'off',
+    'no-unused-vars': 'off',
   },
 };
