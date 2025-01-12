@@ -36,15 +36,66 @@ const posts: PostProps[] = [
     createdAt: '2024-10-24',
     uid: '123',
   },
+  {
+    id: '4',
+    email: 'test@email.com',
+    content: '내용입니다4',
+    createdAt: '2024-10-24',
+    uid: '123',
+  },
+  {
+    id: '5',
+    email: 'test@email.com',
+    content: '내용입니다3',
+    createdAt: '2024-10-24',
+    uid: '123',
+  },
+  {
+    id: '6',
+    email: 'test@email.com',
+    content: '내용입니다3',
+    createdAt: '2024-10-24',
+    uid: '123',
+  },
+  {
+    id: '7',
+    email: 'test@email.com',
+    content: '내용입니다3',
+    createdAt: '2024-10-24',
+    uid: '123',
+  },
+  {
+    id: '3',
+    email: 'test@email.com',
+    content: '내용입니다3',
+    createdAt: '2024-10-24',
+    uid: '123',
+  },
+  {
+    id: '3',
+    email: 'test@email.com',
+    content: '내용입니다3',
+    createdAt: '2024-10-24',
+    uid: '123',
+  },
+  {
+    id: '3',
+    email: 'test@email.com',
+    content: '내용입니다3',
+    createdAt: '2024-10-24',
+    uid: '123',
+  },
 ];
 
 export default function HomePage() {
   return (
     <div className="home">
-      <div className="home__title">Home</div>
-      <div className="home__tabs">
-        <div className="home__tab home__tab--active">For You</div>
-        <div className="home__tab">Following</div>
+      <div className="home__top">
+        <div className="home__title">Home</div>
+        <div className="home__tabs">
+          <div className="home__tab home__tab--active">For You</div>
+          <div className="home__tab">Following</div>
+        </div>
       </div>
       <PostForm />
       {/* Tweet Posts */}
