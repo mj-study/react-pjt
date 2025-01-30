@@ -47,6 +47,7 @@ export default function HomePage() {
           <div className="home__tab">Following</div>
         </div>
       </div>
+
       <PostForm />
       {/* Tweet Posts */}
       <div className="post">
