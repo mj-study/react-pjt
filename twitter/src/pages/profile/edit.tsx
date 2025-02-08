@@ -15,6 +15,8 @@ import { updateProfile } from 'firebase/auth';
 import { storage } from 'firebaseApp';
 import { useNavigate } from 'react-router-dom';
 
+const STORAGE_DOWNLOAD_URL_STR = '"https://firestore.googleapis.com/';
+
 export default function ProfileEdit() {
   const [displayName, setDisplayName] = useState<string>('');
   const [imageUrl, setImageUrl] = useState<string | null>();
@@ -30,13 +32,16 @@ export default function ProfileEdit() {
     e.preventDefault();
 
     try {
-      // 기존 이미지 삭제
-      // if (user?.photoURL) {
-      //   const imageRef = ref(storage, user?.photoURL);
-      //   await deleteObject(imageRef).catch((e) => {
-      //     console.error(e);
-      //   });
-      // }
+      // 기존 유저 이미지가 firestore인 경우에만 삭제
+      if (
+        user?.photoURL &&
+        user?.photoURL?.includes(STORAGE_DOWNLOAD_URL_STR)
+      ) {
+        const imageRef = ref(storage, user?.photoURL);
+        await deleteObject(imageRef).catch((e) => {
+          console.error(e);
+        });
+      }
 
       // 이미지 업로드
       if (imageUrl) {
